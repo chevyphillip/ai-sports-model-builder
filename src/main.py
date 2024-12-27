@@ -7,8 +7,10 @@ from sklearn.preprocessing import StandardScaler
 import schedule
 import time
 
+
 def main():
     pass
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()
