@@ -1,0 +1,35 @@
+# Python
+__pycache__/
+*.py[cod]
+*.class
+*.so
+.Python
+.env
+.DS_Store
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# .env
+.env
+.env.example
+.env.template
+.env.local.example
+.env.dev.example
+.env.prod.example
+
+# Alembic
+alembic/
+alembic.ini
+
+#venv
+venv/
+
+# VS Code
+.vscode/
+
+# Data
+data/raw/*
+data/processed/*
+!data/raw/.gitkeep
+!data/processed/.gitkeep
