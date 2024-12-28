@@ -2,250 +2,171 @@
 
 import pytest
 import requests_mock
+from datetime import datetime, timezone
 
 from src.api.odds_api import OddsAPI
 
 
 @pytest.fixture
-def odds_api_client():
-    """Create an Odds API client for testing."""
+def odds_api():
+    """Create an OddsAPI instance with test configuration."""
     return OddsAPI(api_key="test_api_key")
 
 
-@pytest.fixture
-def mock_sports_response():
-    """Mock response for the sports endpoint."""
-    return [
-        {
-            "key": "basketball_nba",
-            "group": "Basketball",
-            "title": "NBA",
-            "description": "US Basketball",
-            "active": True,
-            "has_outrights": False,
-        }
+def test_get_sports(odds_api, requests_mock):
+    """Test getting list of available sports."""
+    mock_response = [
+        {"key": "basketball_nba", "title": "NBA"},
+        {"key": "basketball_ncaab", "title": "NCAAB"},
     ]
+    requests_mock.get(
+        "https://api.the-odds-api.com/v4/sports?apiKey=test_api_key&regions=us&markets=h2h%2Cspreads%2Ctotals&dateFormat=iso&oddsFormat=american",
+        json=mock_response,
+    )
+
+    response = odds_api.get_sports()
+    assert response == mock_response
 
 
-@pytest.fixture
-def mock_odds_response():
-    """Mock response for the odds endpoint."""
-    return [
+def test_get_odds(odds_api, requests_mock):
+    """Test getting odds for a sport."""
+    mock_response = {"success": True, "data": [{"game": "test", "odds": 1.5}]}
+    requests_mock.get(
+        "https://api.the-odds-api.com/v4/sports/basketball_nba/odds?apiKey=test_api_key&regions=us&markets=h2h%2Cspreads%2Ctotals&dateFormat=iso&oddsFormat=american",
+        json=mock_response,
+    )
+
+    response = odds_api.get_odds("basketball_nba")
+    assert response == mock_response
+
+
+def test_get_scores(odds_api, requests_mock):
+    """Test getting scores for a sport."""
+    mock_response = {"success": True, "data": [{"game": "test", "score": "100-95"}]}
+    requests_mock.get(
+        "https://api.the-odds-api.com/v4/sports/basketball_nba/scores?apiKey=test_api_key&regions=us&markets=h2h%2Cspreads%2Ctotals&dateFormat=iso&oddsFormat=american&daysFrom=1",
+        json=mock_response,
+    )
+
+    response = odds_api.get_scores("basketball_nba")
+    assert response == mock_response
+
+
+def test_get_events(odds_api, requests_mock):
+    """Test getting events for a sport."""
+    mock_response = [
         {
-            "id": "1",
+            "id": "19588d18dd485a02f3cd4b0205255548",
             "sport_key": "basketball_nba",
             "sport_title": "NBA",
-            "commence_time": "2024-01-01T00:00:00Z",
-            "home_team": "Los Angeles Lakers",
-            "away_team": "Golden State Warriors",
-            "bookmakers": [
-                {
-                    "key": "fanduel",
-                    "title": "FanDuel",
-                    "markets": [
-                        {
-                            "key": "h2h",
-                            "outcomes": [
-                                {"name": "Los Angeles Lakers", "price": 1.91},
-                                {"name": "Golden State Warriors", "price": 1.91},
-                            ],
-                        }
-                    ],
-                }
-            ],
+            "commence_time": "2024-12-28T20:10:00Z",
+            "home_team": "Atlanta Hawks",
+            "away_team": "Miami Heat",
         }
     ]
-
-
-@pytest.fixture
-def mock_scores_response():
-    """Mock response for the scores endpoint."""
-    return [
-        {
-            "id": "1",
-            "sport_key": "basketball_nba",
-            "sport_title": "NBA",
-            "commence_time": "2024-01-01T00:00:00Z",
-            "completed": True,
-            "home_team": "Los Angeles Lakers",
-            "away_team": "Golden State Warriors",
-            "scores": [
-                {"name": "Los Angeles Lakers", "score": 120},
-                {"name": "Golden State Warriors", "score": 110},
-            ],
-            "last_update": "2024-01-01T02:30:00Z",
-        }
-    ]
-
-
-@pytest.fixture
-def mock_events_response():
-    """Mock response for the events endpoint."""
-    return [
-        {
-            "id": "1",
-            "sport_key": "basketball_nba",
-            "sport_title": "NBA",
-            "commence_time": "2024-01-01T00:00:00Z",
-            "home_team": "Los Angeles Lakers",
-            "away_team": "Golden State Warriors",
-            "status": "upcoming",
-        }
-    ]
-
-
-@pytest.fixture
-def mock_event_odds_response():
-    """Mock response for the event odds endpoint."""
-    return [
-        {
-            "id": "1",
-            "sport_key": "basketball_nba",
-            "sport_title": "NBA",
-            "commence_time": "2024-01-01T00:00:00Z",
-            "home_team": "Los Angeles Lakers",
-            "away_team": "Golden State Warriors",
-            "bookmakers": [
-                {
-                    "key": "fanduel",
-                    "title": "FanDuel",
-                    "markets": [
-                        {
-                            "key": "h2h",
-                            "outcomes": [
-                                {"name": "Los Angeles Lakers", "price": 1.91},
-                                {"name": "Golden State Warriors", "price": 1.91},
-                            ],
-                        }
-                    ],
-                }
-            ],
-        }
-    ]
-
-
-def test_get_sports(odds_api_client, mock_sports_response, requests_mock):
-    """Test getting sports data."""
+    current_time = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     requests_mock.get(
-        "https://api.the-odds-api.com/v4/sports",
-        json=mock_sports_response,
+        f"https://api.the-odds-api.com/v4/sports/basketball_nba/events?apiKey=test_api_key&regions=us&markets=h2h%2Cspreads%2Ctotals&dateFormat=iso&oddsFormat=american&commence_time={current_time}",
+        json=mock_response,
     )
 
-    result = odds_api_client.get_sports()
-    assert result == mock_sports_response
-    assert len(result) == 1
-    assert result[0]["key"] == "basketball_nba"
+    response = odds_api.get_events("basketball_nba")
+    assert response == mock_response
 
 
-def test_get_odds(odds_api_client, mock_odds_response, requests_mock):
-    """Test getting odds data."""
+def test_get_event_odds(odds_api, requests_mock):
+    """Test getting odds for a specific event."""
+    event_id = "19588d18dd485a02f3cd4b0205255548"
+    mock_response = {
+        "id": event_id,
+        "sport_key": "basketball_nba",
+        "sport_title": "NBA",
+        "commence_time": "2024-12-28T20:10:00Z",
+        "home_team": "Atlanta Hawks",
+        "away_team": "Miami Heat",
+        "bookmakers": [
+            {
+                "key": "fanduel",
+                "title": "FanDuel",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "outcomes": [
+                            {"name": "Atlanta Hawks", "price": -110},
+                            {"name": "Miami Heat", "price": -110},
+                        ],
+                    }
+                ],
+            }
+        ],
+    }
     requests_mock.get(
-        "https://api.the-odds-api.com/v4/sports/basketball_nba/odds",
-        json=mock_odds_response,
+        f"https://api.the-odds-api.com/v4/sports/basketball_nba/events/{event_id}/odds?apiKey=test_api_key&regions=us&markets=h2h%2Cspreads%2Ctotals&dateFormat=iso&oddsFormat=american",
+        json=mock_response,
     )
 
-    result = odds_api_client.get_odds("basketball_nba")
-    assert result == mock_odds_response
-    assert len(result) == 1
-    assert result[0]["sport_key"] == "basketball_nba"
+    response = odds_api.get_event_odds("basketball_nba", event_id)
+    assert response == mock_response
 
 
-def test_get_scores(odds_api_client, mock_scores_response, requests_mock):
-    """Test getting scores data."""
-    requests_mock.get(
-        "https://api.the-odds-api.com/v4/sports/basketball_nba/scores",
-        json=mock_scores_response,
-    )
-
-    result = odds_api_client.get_scores("basketball_nba")
-    assert result == mock_scores_response
-    assert len(result) == 1
-    assert result[0]["sport_key"] == "basketball_nba"
-
-
-def test_get_events(odds_api_client, mock_events_response, requests_mock):
-    """Test getting events data."""
-    requests_mock.get(
-        "https://api.the-odds-api.com/v4/sports/basketball_nba/events",
-        json=mock_events_response,
-    )
-
-    result = odds_api_client.get_events("basketball_nba")
-    assert result == mock_events_response
-    assert len(result) == 1
-    assert result[0]["sport_key"] == "basketball_nba"
-
-
-def test_get_event_odds(odds_api_client, mock_event_odds_response, requests_mock):
-    """Test getting event odds data."""
-    requests_mock.get(
-        "https://api.the-odds-api.com/v4/sports/basketball_nba/events/1/odds",
-        json=mock_event_odds_response,
-    )
-
-    result = odds_api_client.get_event_odds("basketball_nba", "1")
-    assert result == mock_event_odds_response
-    assert len(result) == 1
-    assert result[0]["sport_key"] == "basketball_nba"
-
-
-def test_api_error_handling(odds_api_client, requests_mock):
-    """Test handling of API errors."""
+def test_api_error_handling(odds_api, requests_mock):
+    """Test handling of various API errors."""
     # Test 404 error
     requests_mock.get(
-        "https://api.the-odds-api.com/v4/sports",
+        "https://api.the-odds-api.com/v4/sports?apiKey=test_api_key&regions=us&markets=h2h%2Cspreads%2Ctotals&dateFormat=iso&oddsFormat=american",
         status_code=404,
     )
-    result = odds_api_client.get_sports()
-    assert result == []
+    response = odds_api.get_sports()
+    assert response is None
 
-    # Test 429 error (rate limit)
+    # Test rate limit error
     requests_mock.get(
-        "https://api.the-odds-api.com/v4/sports",
+        "https://api.the-odds-api.com/v4/sports?apiKey=test_api_key&regions=us&markets=h2h%2Cspreads%2Ctotals&dateFormat=iso&oddsFormat=american",
         status_code=429,
     )
-    result = odds_api_client.get_sports()
-    assert result == []
+    response = odds_api.get_sports()
+    assert response is None
 
-    # Test 500 error
+    # Test server error
     requests_mock.get(
-        "https://api.the-odds-api.com/v4/sports",
+        "https://api.the-odds-api.com/v4/sports?apiKey=test_api_key&regions=us&markets=h2h%2Cspreads%2Ctotals&dateFormat=iso&oddsFormat=american",
         status_code=500,
     )
-    result = odds_api_client.get_sports()
-    assert result == []
+    response = odds_api.get_sports()
+    assert response is None
 
 
-def test_invalid_parameters(odds_api_client, requests_mock):
+def test_invalid_parameters(odds_api, requests_mock):
     """Test handling of invalid parameters."""
-    # Test invalid sport key for odds
+    # Test invalid sport
     requests_mock.get(
-        "https://api.the-odds-api.com/v4/sports/invalid/odds",
+        "https://api.the-odds-api.com/v4/sports/invalid/odds?apiKey=test_api_key&regions=us&markets=h2h%2Cspreads%2Ctotals&dateFormat=iso&oddsFormat=american",
         status_code=401,
     )
-    result = odds_api_client.get_odds("invalid")
-    assert result == []
+    response = odds_api.get_odds("invalid")
+    assert response is None
 
-    # Test invalid sport key for scores
+    # Test invalid sport for scores
     requests_mock.get(
-        "https://api.the-odds-api.com/v4/sports/invalid/scores",
+        "https://api.the-odds-api.com/v4/sports/invalid/scores?apiKey=test_api_key&regions=us&markets=h2h%2Cspreads%2Ctotals&dateFormat=iso&oddsFormat=american&daysFrom=1",
         status_code=401,
     )
-    result = odds_api_client.get_scores("invalid")
-    assert result == []
+    response = odds_api.get_scores("invalid")
+    assert response is None
 
-    # Test invalid sport key for events
+    # Test invalid sport for events
+    current_time = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     requests_mock.get(
-        "https://api.the-odds-api.com/v4/sports/invalid/events",
+        f"https://api.the-odds-api.com/v4/sports/invalid/events?apiKey=test_api_key&regions=us&markets=h2h%2Cspreads%2Ctotals&dateFormat=iso&oddsFormat=american&commence_time={current_time}",
         status_code=401,
     )
-    result = odds_api_client.get_events("invalid")
-    assert result == []
+    response = odds_api.get_events("invalid")
+    assert response is None
 
-    # Test invalid event ID for event odds
+    # Test invalid event ID
     requests_mock.get(
-        "https://api.the-odds-api.com/v4/sports/basketball_nba/events/invalid/odds",
+        "https://api.the-odds-api.com/v4/sports/basketball_nba/events/invalid/odds?apiKey=test_api_key&regions=us&markets=h2h%2Cspreads%2Ctotals&dateFormat=iso&oddsFormat=american",
         status_code=401,
     )
-    result = odds_api_client.get_event_odds("basketball_nba", "invalid")
-    assert result == []
+    response = odds_api.get_event_odds("basketball_nba", "invalid")
+    assert response is None

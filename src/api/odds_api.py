@@ -1,10 +1,9 @@
-"""Client for interacting with The Odds API."""
+"""Client for The Odds API."""
 
 import logging
-import urllib.parse
-from typing import Any, Dict, List, Optional
-
+from datetime import datetime, timezone
 import requests
+from typing import Optional, Dict, List, Any, Union
 
 logger = logging.getLogger(__name__)
 
@@ -13,130 +12,84 @@ class OddsAPI:
     """Client for The Odds API."""
 
     def __init__(self, api_key: str):
-        """Initialize the client.
+        """Initialize the API client.
 
         Args:
-            api_key: The API key for The Odds API.
+            api_key: The API key for authentication
         """
         self.api_key = api_key
         self.base_url = "https://api.the-odds-api.com/v4"
+        self.default_params = {
+            "apiKey": self.api_key,
+            "regions": "us",
+            "markets": "h2h,spreads,totals",
+            "dateFormat": "iso",
+            "oddsFormat": "american",
+        }
 
     def _make_request(
-        self, endpoint: str, params: Optional[Dict[str, Any]] = None
-    ) -> Any:
-        """Make a request to The Odds API.
+        self, endpoint: str, params: Optional[Dict] = None
+    ) -> Optional[Union[Dict, List]]:
+        """Make a request to the API.
 
         Args:
-            endpoint: The API endpoint to call.
-            params: Optional query parameters.
+            endpoint: The API endpoint to call
+            params: Optional query parameters
 
         Returns:
-            The response data or an empty list if the request fails.
+            The JSON response or None if the request failed
         """
-        if params is None:
-            params = {}
-
-        # Add API key to query parameters
-        params["apiKey"] = self.api_key
-
-        # Format the endpoint with sport parameter if needed
-        if "{sport}" in endpoint:
-            sport = params.pop("sport", "")
-            # URL encode the sport key
-            sport = urllib.parse.quote(sport, safe="")
-            endpoint = endpoint.format(sport=sport)
-
         url = f"{self.base_url}/{endpoint}"
+        request_params = {**self.default_params, **(params or {})}
+
         try:
-            response = requests.get(url, params=params)
+            response = requests.get(url, params=request_params)
             response.raise_for_status()
             return response.json()
         except requests.exceptions.RequestException as e:
             logger.error(f"Error making request to Odds API: {e}")
-            return []
+            return None
 
-    def get_sports(self) -> List[Dict[str, Any]]:
-        """Get a list of available sports.
-
-        Returns:
-            A list of sports data or an empty list if the request fails.
-        """
+    def get_sports(self) -> Optional[List[Dict]]:
+        """Get a list of available sports."""
         return self._make_request("sports")
 
-    def get_odds(self, sport: str) -> List[Dict[str, Any]]:
-        """Get odds for a specific sport.
+    def get_odds(self, sport: str) -> Optional[List[Dict]]:
+        """Get odds for a sport.
 
         Args:
-            sport: The sport key (e.g., "basketball_nba").
-
-        Returns:
-            A list of odds data or an empty list if the request fails.
+            sport: The sport key (e.g., 'basketball_nba')
         """
-        params = {
-            "sport": sport,
-            "regions": "us",
-            "markets": "h2h,spreads,totals",
-        }
-        return self._make_request("sports/{sport}/odds", params)
+        return self._make_request(f"sports/{sport}/odds")
 
-    def get_scores(self, sport: str, days_from: int = 1) -> List[Dict[str, Any]]:
-        """Get scores for a specific sport.
+    def get_scores(self, sport: str, days_from: int = 1) -> Optional[List[Dict]]:
+        """Get scores for a sport.
 
         Args:
-            sport: The sport key (e.g., "basketball_nba").
-            days_from: Number of days from today to include (-1 for yesterday).
-
-        Returns:
-            A list of scores data or an empty list if the request fails.
+            sport: The sport key (e.g., 'basketball_nba')
+            days_from: Number of days from today to include
         """
-        params = {
-            "sport": sport,
-            "daysFrom": days_from,
-        }
-        return self._make_request("sports/{sport}/scores", params)
+        params = {"daysFrom": days_from}
+        return self._make_request(f"sports/{sport}/scores", params)
 
-    def get_events(self, sport: str) -> List[Dict[str, Any]]:
-        """Get events for a specific sport.
+    def get_events(self, sport: str) -> Optional[List[Dict]]:
+        """Get events for a sport.
 
         Args:
-            sport: The sport key (e.g., "basketball_nba").
-
-        Returns:
-            A list of events data or an empty list if the request fails.
+            sport: The sport key (e.g., 'basketball_nba')
         """
-        params = {"sport": sport}
-        return self._make_request("sports/{sport}/events", params)
+        current_time = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+        params = {"commence_time": current_time}
+        return self._make_request(f"sports/{sport}/events", params)
 
-    def get_event_odds(
-        self,
-        sport: str,
-        event_id: str,
-        regions: str = "us",
-        markets: str = "h2h,spreads,totals",
-        date_format: str = "iso",
-        odds_format: str = "decimal",
-    ) -> List[Dict[str, Any]]:
+    def get_event_odds(self, sport: str, event_id: str) -> Optional[Dict]:
         """Get odds for a specific event.
 
         Args:
-            sport: The sport key (e.g., "basketball_nba").
-            event_id: The event ID.
-            regions: Comma-separated list of regions (default: "us").
-            markets: Comma-separated list of markets (default: "h2h,spreads,totals").
-            date_format: Date format (default: "iso").
-            odds_format: Odds format (default: "decimal").
-
-        Returns:
-            A list of event odds data or an empty list if the request fails.
+            sport: The sport key (e.g., 'basketball_nba')
+            event_id: The unique identifier for the event
         """
-        params = {
-            "sport": sport,
-            "regions": regions,
-            "markets": markets,
-            "dateFormat": date_format,
-            "oddsFormat": odds_format,
-        }
-        return self._make_request(f"sports/{{sport}}/events/{event_id}/odds", params)
+        return self._make_request(f"sports/{sport}/events/{event_id}/odds")
 
 
 # Usage example:

@@ -1,7 +1,5 @@
-"""
-Data collection utilities for NBA game data.
-"""
+"""Data collection package for scraping and processing sports data."""
 
-from .firecrawl_client import FirecrawlClient
+from .firecrawl_client import FireCrawlClient
 
-__all__ = ["FirecrawlClient"]
+__all__ = ["FireCrawlClient"]
