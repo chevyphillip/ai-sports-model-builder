@@ -36,9 +36,7 @@ class NBAScheduleTransformer:
         df["visitor_points"] = pd.to_numeric(df["visitor_points"], errors="coerce")
         df["home_points"] = pd.to_numeric(df["home_points"], errors="coerce")
         df["attendance"] = (
-            df["attendance"]
-            .str.replace(",", "")  # Remove commas
-            .pipe(pd.to_numeric, errors="coerce")  # Convert to numeric
+            pd.to_numeric(df["attendance"], errors="coerce").fillna(0).astype(int)
         )
 
         # Generate unique game ID
@@ -61,7 +59,6 @@ class NBAScheduleTransformer:
             "home_points",
             "attendance",
             "arena",
-            "box_score_url",
             "source",
             "scraped_at",
         ]

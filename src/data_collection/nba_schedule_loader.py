@@ -16,13 +16,12 @@ class NBAScheduleLoader:
     def __init__(self):
         """Initialize the loader with database connection details."""
         self.db_config = {
-            "dbname": os.getenv("POSTGRES_DB"),
-            "user": os.getenv("POSTGRES_USER"),
-            "password": os.getenv("POSTGRES_PASSWORD"),
-            "host": os.getenv("POSTGRES_HOST"),
-            "port": os.getenv("POSTGRES_PORT"),
-            "sslmode": "verify-full",
-            "sslcert": "db_prod.crt",
+            "dbname": os.getenv("DB_NAME"),
+            "user": os.getenv("DB_USER"),
+            "password": os.getenv("DB_PASSWORD"),
+            "host": os.getenv("DB_HOST"),
+            "port": os.getenv("DB_PORT"),
+            "sslmode": "require",  # Force SSL connection
         }
 
     def load_games(self, records: List[Dict]) -> int:
@@ -49,9 +48,10 @@ class NBAScheduleLoader:
                 visitor_points,
                 home_team,
                 home_points,
+                overtime,
+                ot_periods,
                 attendance,
                 arena,
-                box_score_url,
                 source,
                 scraped_at
             )
@@ -59,9 +59,10 @@ class NBAScheduleLoader:
             ON CONFLICT (game_id) DO UPDATE SET
                 visitor_points = EXCLUDED.visitor_points,
                 home_points = EXCLUDED.home_points,
+                overtime = EXCLUDED.overtime,
+                ot_periods = EXCLUDED.ot_periods,
                 attendance = EXCLUDED.attendance,
                 arena = EXCLUDED.arena,
-                box_score_url = EXCLUDED.box_score_url,
                 source = EXCLUDED.source,
                 scraped_at = EXCLUDED.scraped_at,
                 updated_at = CURRENT_TIMESTAMP
@@ -88,9 +89,10 @@ class NBAScheduleLoader:
                             r["visitor_points"],
                             r["home_team"],
                             r["home_points"],
+                            r.get("overtime", False),
+                            r.get("ot_periods", 0),
                             r["attendance"],
                             r["arena"],
-                            r["box_score_url"],
                             r["source"],
                             r["scraped_at"],
                         )

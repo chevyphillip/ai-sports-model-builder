@@ -32,6 +32,8 @@ def upgrade() -> None:
         sa.Column("visitor_points", sa.Integer()),
         sa.Column("home_team", sa.String(100), nullable=False),
         sa.Column("home_points", sa.Integer()),
+        sa.Column("overtime", sa.Boolean(), default=False),
+        sa.Column("ot_periods", sa.Integer(), default=0),
         sa.Column("attendance", sa.Integer()),
         sa.Column("arena", sa.String(200)),
         sa.Column("box_score_url", sa.String(500)),

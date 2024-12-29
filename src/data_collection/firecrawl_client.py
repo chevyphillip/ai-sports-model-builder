@@ -2,10 +2,14 @@
 
 import os
 from typing import Dict, Optional
-from datetime import datetime
+from datetime import datetime, timezone
 import json
 from bs4 import BeautifulSoup
 from firecrawl import FirecrawlApp
+import logging
+import psycopg2
+from psycopg2.extras import RealDictCursor
+from urllib.parse import quote_plus
 
 
 class FireCrawlClient:
@@ -24,6 +28,48 @@ class FireCrawlClient:
             )
 
         self.app = FirecrawlApp(api_key=self.api_key)
+
+        # Set up database connection
+        self.db_params = {
+            "dbname": os.getenv("DB_NAME"),
+            "user": os.getenv("DB_USER"),
+            "password": os.getenv("DB_PASSWORD"),
+            "host": os.getenv("DB_HOST"),
+            "port": os.getenv("DB_PORT"),
+            "sslmode": "require",
+        }
+
+    def get_db_connection(self):
+        """Get a database connection."""
+        return psycopg2.connect(**self.db_params)
+
+    def insert_game(self, game_data: Dict) -> None:
+        """Insert or update a game in the database.
+
+        Args:
+            game_data: Dictionary containing game data
+        """
+        upsert_query = """
+            INSERT INTO nba_game_lines.games (
+                game_id, game_date, season_year, season,
+                visitor_team, visitor_points, home_team, home_points,
+                arena, source, scraped_at
+            ) VALUES (
+                %(game_id)s, %(game_date)s, %(season_year)s, %(season)s,
+                %(visitor_team)s, %(visitor_points)s, %(home_team)s, %(home_points)s,
+                %(arena)s, %(source)s, %(scraped_at)s
+            )
+            ON CONFLICT (game_id) DO UPDATE SET
+                visitor_points = EXCLUDED.visitor_points,
+                home_points = EXCLUDED.home_points,
+                updated_at = CURRENT_TIMESTAMP,
+                scraped_at = EXCLUDED.scraped_at
+        """
+
+        with self.get_db_connection() as conn:
+            with conn.cursor() as cur:
+                cur.execute(upsert_query, game_data)
+            conn.commit()
 
     def generate_nba_schedule_url(self, season_year: int, month: str = None) -> str:
         """Generate URL for NBA schedule page.
@@ -47,21 +93,16 @@ class FireCrawlClient:
         self,
         season_year: int,
         month: str = None,
-        use_local: bool = True,
     ) -> Dict:
         """Scrape NBA schedule data for a specific season and month.
 
         Args:
-            season_year: The year of the season (e.g., 2012 for 2011-12 season)
+            season_year: The year of the season (e.g., 2024 for 2023-24 season)
             month: Optional month name in lowercase (e.g., 'december', 'january')
-            use_local: Whether to use local JSON file instead of making API call
 
         Returns:
-            Dictionary containing the scraped schedule data
+            List of dictionaries containing the scraped schedule data
         """
-        if use_local:
-            return self._load_local_data(season_year, month)
-
         url = self.generate_nba_schedule_url(season_year, month)
 
         try:
@@ -76,34 +117,16 @@ class FireCrawlClient:
             )
 
             if not response or not response.get("html"):
-                print(f"No HTML content found in response: {response}")
-                return {}
+                logging.warning(f"No HTML content found in response: {response}")
+                return []
 
             # Process the response data
             return self._process_schedule_data(
                 {"html": response["html"]}, season_year, month
             )
         except Exception as e:
-            print(f"Error scraping NBA schedule: {e}")
-            return {}
-
-    def _load_local_data(self, season_year: int, month: str = None) -> Dict:
-        """Load schedule data from local JSON file.
-
-        Args:
-            season_year: The year of the season
-            month: Optional month name
-
-        Returns:
-            Dictionary containing the schedule data
-        """
-        try:
-            with open("firecrawle-data/results_01.json", "r") as f:
-                raw_data = json.load(f)
-                return self._process_schedule_data(raw_data, season_year, month)
-        except Exception as e:
-            print(f"Error loading local data: {e}")
-            return {}
+            logging.error(f"Error scraping NBA schedule: {e}")
+            return []
 
     def _process_schedule_data(
         self, raw_data: Dict, season_year: int, month: str = None
@@ -112,21 +135,13 @@ class FireCrawlClient:
 
         Args:
             raw_data: Raw data from FireCrawl API
-            season_year: The year of the season
+            season_year: The year of the season (e.g., 2024 for 2024-25 season)
             month: Optional month name
 
         Returns:
-            Dictionary containing processed schedule data
+            List of dictionaries containing processed schedule data
         """
-        processed_data = {
-            "games": [],
-            "metadata": {
-                "scraped_at": datetime.utcnow().isoformat(),
-                "season_year": season_year,
-                "season": f"{season_year-1}-{str(season_year)[2:]}",
-                "month": month,
-            },
-        }
+        processed_data = []
 
         if not raw_data or not raw_data.get("html"):
             return processed_data
@@ -136,55 +151,79 @@ class FireCrawlClient:
         soup = BeautifulSoup(html_content, "html.parser")
         schedule_table = soup.find("table", id="schedule")
         if not schedule_table:
-            print("No schedule table found in HTML")
+            logging.warning("No schedule table found in HTML")
             return processed_data
 
         game_rows = schedule_table.select("tbody tr")
         if not game_rows:
-            print("No game rows found in schedule table")
+            logging.warning("No game rows found in schedule table")
             return processed_data
 
         for row in game_rows:
-            # Extract date
-            date_cell = row.select_one("th[data-stat='date_game'] a")
-            if not date_cell:
-                continue
-            date_str = date_cell.text.strip()
             try:
-                date = datetime.strptime(date_str, "%a, %b %d, %Y")
-            except ValueError as e:
-                print(f"Error parsing date {date_str}: {e}")
-                continue
+                # Extract date
+                date_cell = row.select_one("th[data-stat='date_game'] a")
+                if not date_cell:
+                    continue
+                date_str = date_cell.text.strip()
+                try:
+                    date = datetime.strptime(date_str, "%a, %b %d, %Y")
+                except ValueError as e:
+                    logging.error(f"Error parsing date {date_str}: {e}")
+                    continue
 
-            # Extract game data
-            try:
+                # Extract visitor team and points
+                visitor_team = row.select_one("td[data-stat='visitor_team_name']")
+                visitor_points = row.select_one("td[data-stat='visitor_pts']")
+                if not visitor_team or not visitor_points:
+                    continue
+
+                # Extract home team and points
+                home_team = row.select_one("td[data-stat='home_team_name']")
+                home_points = row.select_one("td[data-stat='home_pts']")
+                if not home_team or not home_points:
+                    continue
+
+                # Extract arena
+                arena = row.select_one("td[data-stat='arena_name']")
+                if not arena:
+                    continue
+
+                # Clean team names and create abbreviations
+                home_team_name = home_team.text.strip()
+                visitor_team_name = visitor_team.text.strip()
+                home_abbr = "".join(c for c in home_team_name.upper() if c.isalpha())[
+                    :3
+                ]
+                visitor_abbr = "".join(
+                    c for c in visitor_team_name.upper() if c.isalpha()
+                )[:3]
+
+                # Generate new format game_id: NBA-YYYY-MM-DD-HOME-AWAY
+                game_id = f"NBA-{date.strftime('%Y-%m-%d')}-{home_abbr}-{visitor_abbr}"
+
+                # Determine season year and season string
+                actual_season_year = (
+                    season_year + 1 if date.month >= 10 else season_year
+                )
+                season = f"{actual_season_year-1}-{str(actual_season_year)[2:]}"
+
                 game = {
-                    "date": date.isoformat(),
-                    "start_time": row.select_one(
-                        "td[data-stat='game_start_time']"
-                    ).text.strip(),
-                    "visitor_team": row.select_one(
-                        "td[data-stat='visitor_team_name'] a"
-                    ).text.strip(),
-                    "visitor_points": int(
-                        row.select_one("td[data-stat='visitor_pts']").text.strip() or 0
-                    ),
-                    "home_team": row.select_one(
-                        "td[data-stat='home_team_name'] a"
-                    ).text.strip(),
-                    "home_points": int(
-                        row.select_one("td[data-stat='home_pts']").text.strip() or 0
-                    ),
-                    "attendance": self._parse_attendance(
-                        row.select_one("td[data-stat='attendance']").text.strip()
-                    ),
-                    "arena": row.select_one("td[data-stat='arena_name']").text.strip(),
-                    "box_score_url": "https://www.basketball-reference.com"
-                    + row.select_one("td[data-stat='box_score_text'] a")["href"],
+                    "game_id": game_id,
+                    "game_date": date.date(),  # Store date without time
+                    "season_year": actual_season_year,
+                    "season": season,
+                    "visitor_team": visitor_team_name,
+                    "visitor_points": int(visitor_points.text.strip() or 0),
+                    "home_team": home_team_name,
+                    "home_points": int(home_points.text.strip() or 0),
+                    "arena": arena.text.strip(),
+                    "source": "basketball-reference",
+                    "scraped_at": datetime.now(timezone.utc),
                 }
-                processed_data["games"].append(game)
+                processed_data.append(game)
             except (AttributeError, ValueError) as e:
-                print(f"Error processing game row: {e}")
+                logging.error(f"Error processing game row: {e}")
                 continue
 
         return processed_data
