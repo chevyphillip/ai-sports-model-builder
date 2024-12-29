@@ -1,11 +1,11 @@
 """FireCrawl API client for scraping NBA schedule data."""
 
 import os
-from typing import Dict, Optional
+from typing import Dict, Optional, List
 from datetime import datetime, timezone
 import json
+import requests
 from bs4 import BeautifulSoup
-from firecrawl import FirecrawlApp
 import logging
 import psycopg2
 from psycopg2.extras import RealDictCursor
@@ -27,7 +27,11 @@ class FireCrawlClient:
                 "FireCrawl API key not provided and not found in environment"
             )
 
-        self.app = FirecrawlApp(api_key=self.api_key)
+        self.base_url = "https://api.firecrawl.io/v1"
+        self.headers = {
+            "Authorization": f"Bearer {self.api_key}",
+            "Content-Type": "application/json",
+        }
 
         # Set up database connection
         self.db_params = {
@@ -42,6 +46,33 @@ class FireCrawlClient:
     def get_db_connection(self):
         """Get a database connection."""
         return psycopg2.connect(**self.db_params)
+
+    def scrape_url(self, url: str, params: Dict = None) -> Dict:
+        """Make a request to the FireCrawl API.
+
+        Args:
+            url: URL to scrape
+            params: Optional parameters for the scrape request
+
+        Returns:
+            Dictionary containing the scraped data
+        """
+        endpoint = f"{self.base_url}/scrape"
+        data = {
+            "url": url,
+            "formats": ["html"],
+            "onlyMainContent": True,
+            "waitFor": 5000,
+            **(params or {}),
+        }
+
+        try:
+            response = requests.post(endpoint, headers=self.headers, json=data)
+            response.raise_for_status()
+            return response.json()
+        except requests.exceptions.RequestException as e:
+            logging.error(f"Error making request to FireCrawl API: {e}")
+            return {}
 
     def insert_game(self, game_data: Dict) -> None:
         """Insert or update a game in the database.
@@ -93,7 +124,7 @@ class FireCrawlClient:
         self,
         season_year: int,
         month: str = None,
-    ) -> Dict:
+    ) -> List[Dict]:
         """Scrape NBA schedule data for a specific season and month.
 
         Args:
@@ -106,31 +137,22 @@ class FireCrawlClient:
         url = self.generate_nba_schedule_url(season_year, month)
 
         try:
-            # Use the FireCrawl SDK to scrape the URL
-            response = self.app.scrape_url(
-                url,
-                params={
-                    "formats": ["html"],  # We only need HTML for parsing
-                    "onlyMainContent": True,  # Focus on the main content (schedule table)
-                    "waitFor": 5000,  # Wait 5 seconds for JavaScript content
-                },
-            )
+            # Use the FireCrawl API to scrape the URL
+            response = self.scrape_url(url)
 
             if not response or not response.get("html"):
                 logging.warning(f"No HTML content found in response: {response}")
                 return []
 
             # Process the response data
-            return self._process_schedule_data(
-                {"html": response["html"]}, season_year, month
-            )
+            return self._process_schedule_data(response, season_year, month)
         except Exception as e:
             logging.error(f"Error scraping NBA schedule: {e}")
             return []
 
     def _process_schedule_data(
         self, raw_data: Dict, season_year: int, month: str = None
-    ) -> Dict:
+    ) -> List[Dict]:
         """Process scraped schedule data.
 
         Args:
