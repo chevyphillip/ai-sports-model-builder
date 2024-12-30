@@ -1,8 +1,18 @@
 ---
 name: Bug report
 about: Create a report to help us improve
+<<<<<<< HEAD
+<<<<<<< HEAD
+title: '[BUG] '
+labels: bug
+=======
 title: ''
 labels: ''
+>>>>>>> origin/main
+=======
+title: ''
+labels: ''
+>>>>>>> origin/main
 assignees: ''
 
 ---
@@ -23,6 +33,24 @@ A clear and concise description of what you expected to happen.
 **Screenshots**
 If applicable, add screenshots to help explain your problem.
 
+<<<<<<< HEAD
+<<<<<<< HEAD
+**Environment (please complete the following information):**
+ - OS: [e.g. macOS, Linux, Windows]
+ - Python Version: [e.g. 3.11.0]
+ - Package Version: [e.g. 1.0.0]
+ - Dependencies: [output of `pip freeze`]
+
+**Additional context**
+Add any other context about the problem here.
+
+**Logs**
+```
+Paste any relevant log output here
+``` 
+=======
+=======
+>>>>>>> origin/main
 **Desktop (please complete the following information):**
  - OS: [e.g. iOS]
  - Browser [e.g. chrome, safari]
@@ -36,3 +64,7 @@ If applicable, add screenshots to help explain your problem.
 
 **Additional context**
 Add any other context about the problem here.
+<<<<<<< HEAD
+>>>>>>> origin/main
+=======
+>>>>>>> origin/main

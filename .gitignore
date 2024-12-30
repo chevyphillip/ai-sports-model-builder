@@ -1,35 +1,207 @@
 # Python
 __pycache__/
 *.py[cod]
-*.class
+*$py.class
 *.so
 .Python
-.env
-.DS_Store
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+.pytest_cache/
+.coverage
+coverage.xml
+htmlcov/
+.tox/
+.nox/
+.hypothesis/
+
+# Virtual Environment
+venv/
+env/
+ENV/
+.env/
+.venv/
+pythonenv*/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.vs/
+*.sublime-workspace
+*.sublime-project
+.project
+.pydevproject
+.settings/
+.classpath
+nbproject/
+
+# Testing and Coverage
+.coverage
+.coverage.*
+coverage.xml
+*.cover
+.pytest_cache/
+.pytest.cache
+nosetests.xml
+coverage/
+.testmondata
+.tmontmp
+test-output/
+test-results/
+
+# Documentation
+docs/_build/
+docs/_static/
+docs/_templates/
+site/
+.mkdocs/
+_build/
+build/
+dist/
 
 # Jupyter Notebook
 .ipynb_checkpoints
+*.ipynb
+jupyter/.ipynb_checkpoints/
+jupyter/notebooks/.ipynb_checkpoints/
 
-# .env
+# Environment variables and secrets
 .env
-.env.example
-.env.template
-.env.local.example
-.env.dev.example
-.env.prod.example
+.env.*
+!.env.example
+*.env
+.envrc
+.direnv
+secrets/
+credentials/
+config.ini
+*.pem
+*.key
+*.crt
+*.cer
+*.der
+*.priv
+*.pub
 
-# Alembic
-alembic/
-alembic.ini
+# Database
+*.db
+*.sqlite
+*.sqlite3
+*.db-shm
+*.db-wal
+*.dump
+*.sql
+*.bak
+migrations/versions/*
+!migrations/versions/.gitkeep
 
-#venv
-venv/
+# Logs
+logs/
+*.log
+log/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pip-log.txt
+pip-delete-this-directory.txt
 
-# VS Code
-.vscode/
+# Cache
+.cache/
+.sass-cache/
+.eslintcache
+.npm
+.yarn
+__pycache__/
+*.py[cod]
+*$py.class
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.pyre/
+.pytype/
 
-# Data
-data/raw/*
-data/processed/*
-!data/raw/.gitkeep
-!data/processed/.gitkeep
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Project specific
+data/raw/
+data/processed/
+data/interim/
+data/external/
+models/trained/
+models/checkpoints/
+notebooks/scratch/
+notebooks/archive/
+outputs/
+results/
+temp/
+tmp/
+
+# API and sensitive data
+api_keys.txt
+credentials.json
+token.json
+*.token
+client_secrets.json
+service-account.json
+google-services.json
+firebase-credentials.json
+
+# Dependency management
+poetry.lock
+Pipfile.lock
+requirements.txt.lock
+yarn.lock
+package-lock.json
+
+# Local development
+local_settings.py
+override.py
+docker-compose.override.yml
+docker-compose.*.yml
+!docker-compose.yml
+
+# Profiling and debugging
+*.prof
+*.lprof
+*.stats
+.benchmarks/
+profile_results/
+memory_profiler/
+
+# Generated files
+generated/
+*.generated.*
+auto_generated/
+*.auto_generated.*
+
+# Backup files
+*.bak
+*.backup
+*~
+*.swp
+*.swo
+*.swn
