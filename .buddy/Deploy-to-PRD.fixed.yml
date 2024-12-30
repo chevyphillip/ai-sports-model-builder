@@ -1,0 +1,9 @@
+- pipeline: "Deploy to PRD"
+  events:
+  - type: "PUSH"
+    refs:
+    - ":default"
+  - type: "PULL_REQUEST"
+    branches:
+    - ":default"
+  fail_on_prepare_env_warning: true
