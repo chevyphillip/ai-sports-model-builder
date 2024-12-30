@@ -13,12 +13,12 @@ SCHEMA_NAME = "nba_game_lines"
 
 
 def query_recent_games():
-    """Query the most recent games from 2024"""
+    """Query the most recent completed games from 2024"""
     # Create engine with properly escaped password
     url = f"postgresql://{os.getenv('DB_USER')}:{quote_plus(os.getenv('DB_PASSWORD'))}@{os.getenv('DB_HOST')}:{os.getenv('DB_PORT')}/{os.getenv('DB_NAME')}"
     engine = create_engine(url, echo=True, connect_args={"sslmode": "require"})
 
-    # Query to get the most recent games from 2024
+    # Query to get the most recent completed games from 2024
     query = text(
         f"""
         SELECT 
@@ -30,6 +30,8 @@ def query_recent_games():
             arena
         FROM {SCHEMA_NAME}.games
         WHERE EXTRACT(YEAR FROM game_date) = 2024
+        AND visitor_points > 0 
+        AND home_points > 0
         ORDER BY game_date DESC
         LIMIT 10
     """
@@ -38,7 +40,7 @@ def query_recent_games():
     # Execute query and print results
     with engine.connect() as conn:
         result = conn.execute(query)
-        print("\nMost recent games from 2024:")
+        print("\nMost recent completed games from 2024:")
         print("=" * 80)
         for row in result:
             print(f"Date: {row.game_date.strftime('%Y-%m-%d')}")
