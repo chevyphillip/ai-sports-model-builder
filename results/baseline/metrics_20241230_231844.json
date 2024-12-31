@@ -1,0 +1,114 @@
+{
+  "training_metrics": {
+    "moneyline": {
+      "accuracy": 0.9437022900763359,
+      "precision": 0.9422283356258597,
+      "recall": 0.9757834757834758,
+      "f1": 0.9587123862841148
+    },
+    "spread": {
+      "mse": 18.963753571428565,
+      "mae": 3.306428571428571,
+      "r2": 0.9160478904097213
+    }
+  },
+  "evaluation_metrics": {
+    "moneyline": {
+      "accuracy": 0.7633587786259542,
+      "precision": 0.7942857142857143,
+      "recall": 0.8424242424242424,
+      "f1": 0.8176470588235294
+    },
+    "spread": {
+      "mse": 23.132524999999998,
+      "mae": 3.55,
+      "r2": -2.7012039999999997
+    }
+  },
+  "feature_importance": {
+    "moneyline": [
+      {
+        "feature": 0,
+        "importance": 0.19266105249046608
+      },
+      {
+        "feature": 1,
+        "importance": 0.18518874555255924
+      },
+      {
+        "feature": 6,
+        "importance": 0.15138109320276427
+      },
+      {
+        "feature": 4,
+        "importance": 0.1459681280581043
+      },
+      {
+        "feature": 5,
+        "importance": 0.13256277412935574
+      },
+      {
+        "feature": 9,
+        "importance": 0.09305611997729163
+      },
+      {
+        "feature": 8,
+        "importance": 0.03775904036384413
+      },
+      {
+        "feature": 3,
+        "importance": 0.02213109989455362
+      },
+      {
+        "feature": 2,
+        "importance": 0.020196123350283264
+      },
+      {
+        "feature": 7,
+        "importance": 0.019095822980777673
+      }
+    ],
+    "spread": [
+      {
+        "feature": 4,
+        "importance": 0.16286237715162472
+      },
+      {
+        "feature": 2,
+        "importance": 0.15771782046653873
+      },
+      {
+        "feature": 8,
+        "importance": 0.1468287590497255
+      },
+      {
+        "feature": 1,
+        "importance": 0.14347366064181322
+      },
+      {
+        "feature": 0,
+        "importance": 0.12845257676008623
+      },
+      {
+        "feature": 5,
+        "importance": 0.1263829891518754
+      },
+      {
+        "feature": 6,
+        "importance": 0.10525977717235685
+      },
+      {
+        "feature": 9,
+        "importance": 0.023056194063883637
+      },
+      {
+        "feature": 7,
+        "importance": 0.005965845542095755
+      },
+      {
+        "feature": 3,
+        "importance": 0.0
+      }
+    ]
+  }
+}

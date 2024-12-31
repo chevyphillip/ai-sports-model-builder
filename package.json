@@ -1,0 +1,26 @@
+{
+  "name": "ai-sports-model-builder",
+  "version": "1.0.0",
+  "description": "AI-powered sports betting model builder",
+  "type": "module",
+  "scripts": {
+    "test": "jest",
+    "test:deployment": "NODE_OPTIONS='--loader ts-node/esm' node --experimental-specifier-resolution=node scripts/test_deployment.ts",
+    "setup:rls": "NODE_OPTIONS='--loader ts-node/esm' node --experimental-specifier-resolution=node scripts/setup_rls.ts",
+    "deploy": "./scripts/deploy.sh"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.39.3",
+    "dotenv": "^16.4.1",
+    "luxon": "^3.4.4"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.11",
+    "@types/luxon": "^3.4.2",
+    "@types/node": "^20.11.10",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.2",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
+  }
+}

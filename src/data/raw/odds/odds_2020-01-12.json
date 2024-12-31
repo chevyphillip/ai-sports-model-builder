@@ -1,0 +1,713 @@
+[
+  {
+    "timestamp": "2020-06-27T03:55:00Z",
+    "previous_timestamp": null,
+    "next_timestamp": "2020-06-27T04:05:00Z",
+    "data": [
+      {
+        "id": "7636e56776d8596a29e00af3b8d13b62",
+        "sport_key": "basketball_nba",
+        "sport_title": "NBA",
+        "commence_time": "2020-07-30T22:30:00Z",
+        "home_team": "New Orleans Pelicans",
+        "away_team": "Utah Jazz",
+        "bookmakers": []
+      },
+      {
+        "id": "f8f32c54c066501d9b92a3084c5896e8",
+        "sport_key": "basketball_nba",
+        "sport_title": "NBA",
+        "commence_time": "2020-07-31T01:00:00Z",
+        "home_team": "Los Angeles Lakers",
+        "away_team": "Los Angeles Clippers",
+        "bookmakers": []
+      },
+      {
+        "id": "4d7b67d20a04804cb54e8722e6be6c09",
+        "sport_key": "basketball_nba",
+        "sport_title": "NBA",
+        "commence_time": "2020-07-31T18:30:00Z",
+        "home_team": "Brooklyn Nets",
+        "away_team": "Orlando Magic",
+        "bookmakers": []
+      },
+      {
+        "id": "4e006bd2626d0389ad6747ae89781610",
+        "sport_key": "basketball_nba",
+        "sport_title": "NBA",
+        "commence_time": "2020-07-31T20:00:00Z",
+        "home_team": "Portland Trail Blazers",
+        "away_team": "Memphis Grizzlies",
+        "bookmakers": []
+      },
+      {
+        "id": "40deb75ba192047a18a185e2363e3909",
+        "sport_key": "basketball_nba",
+        "sport_title": "NBA",
+        "commence_time": "2020-07-31T20:00:00Z",
+        "home_team": "Washington Wizards",
+        "away_team": "Phoenix Suns",
+        "bookmakers": []
+      },
+      {
+        "id": "453bb4a38b1360bbdfc8df574108db1f",
+        "sport_key": "basketball_nba",
+        "sport_title": "NBA",
+        "commence_time": "2020-07-31T22:30:00Z",
+        "home_team": "Milwaukee Bucks",
+        "away_team": "Boston Celtics",
+        "bookmakers": []
+      },
+      {
+        "id": "b193a3c6bf198995eb9354f5131881a9",
+        "sport_key": "basketball_nba",
+        "sport_title": "NBA",
+        "commence_time": "2020-08-01T00:00:00Z",
+        "home_team": "San Antonio Spurs",
+        "away_team": "Sacramento Kings",
+        "bookmakers": []
+      },
+      {
+        "id": "d4bbabeb869f6925c41b523a4c3b5ce8",
+        "sport_key": "basketball_nba",
+        "sport_title": "NBA",
+        "commence_time": "2020-08-01T01:00:00Z",
+        "home_team": "Dallas Mavericks",
+        "away_team": "Houston Rockets",
+        "bookmakers": []
+      }
+    ]
+  },
+  {
+    "timestamp": "2020-06-27T04:05:00Z",
+    "previous_timestamp": "2020-06-27T03:55:00Z",
+    "next_timestamp": "2020-06-27T04:15:00Z",
+    "data": [
+      {
+        "id": "7636e56776d8596a29e00af3b8d13b62",
+        "sport_key": "basketball_nba",
+        "sport_title": "NBA",
+        "commence_time": "2020-07-30T22:30:00Z",
+        "home_team": "New Orleans Pelicans",
+        "away_team": "Utah Jazz",
+        "bookmakers": []
+      },
+      {
+        "id": "f8f32c54c066501d9b92a3084c5896e8",
+        "sport_key": "basketball_nba",
+        "sport_title": "NBA",
+        "commence_time": "2020-07-31T01:00:00Z",
+        "home_team": "Los Angeles Lakers",
+        "away_team": "Los Angeles Clippers",
+        "bookmakers": []
+      },
+      {
+        "id": "4d7b67d20a04804cb54e8722e6be6c09",
+        "sport_key": "basketball_nba",
+        "sport_title": "NBA",
+        "commence_time": "2020-07-31T18:30:00Z",
+        "home_team": "Brooklyn Nets",
+        "away_team": "Orlando Magic",
+        "bookmakers": []
+      },
+      {
+        "id": "4e006bd2626d0389ad6747ae89781610",
+        "sport_key": "basketball_nba",
+        "sport_title": "NBA",
+        "commence_time": "2020-07-31T20:00:00Z",
+        "home_team": "Portland Trail Blazers",
+        "away_team": "Memphis Grizzlies",
+        "bookmakers": []
+      },
+      {
+        "id": "40deb75ba192047a18a185e2363e3909",
+        "sport_key": "basketball_nba",
+        "sport_title": "NBA",
+        "commence_time": "2020-07-31T20:00:00Z",
+        "home_team": "Washington Wizards",
+        "away_team": "Phoenix Suns",
+        "bookmakers": []
+      },
+      {
+        "id": "453bb4a38b1360bbdfc8df574108db1f",
+        "sport_key": "basketball_nba",
+        "sport_title": "NBA",
+        "commence_time": "2020-07-31T22:30:00Z",
+        "home_team": "Milwaukee Bucks",
+        "away_team": "Boston Celtics",
+        "bookmakers": []
+      },
+      {
+        "id": "b193a3c6bf198995eb9354f5131881a9",
+        "sport_key": "basketball_nba",
+        "sport_title": "NBA",
+        "commence_time": "2020-08-01T00:00:00Z",
+        "home_team": "San Antonio Spurs",
+        "away_team": "Sacramento Kings",
+        "bookmakers": []
+      },
+      {
+        "id": "d4bbabeb869f6925c41b523a4c3b5ce8",
+        "sport_key": "basketball_nba",
+        "sport_title": "NBA",
+        "commence_time": "2020-08-01T01:00:00Z",
+        "home_team": "Dallas Mavericks",
+        "away_team": "Houston Rockets",
+        "bookmakers": []
+      }
+    ]
+  },
+  {
+    "timestamp": "2020-06-27T04:15:00Z",
+    "previous_timestamp": "2020-06-27T04:05:00Z",
+    "next_timestamp": "2020-06-27T04:25:00Z",
+    "data": [
+      {
+        "id": "7636e56776d8596a29e00af3b8d13b62",
+        "sport_key": "basketball_nba",
+        "sport_title": "NBA",
+        "commence_time": "2020-07-30T22:30:00Z",
+        "home_team": "New Orleans Pelicans",
+        "away_team": "Utah Jazz",
+        "bookmakers": []
+      },
+      {
+        "id": "f8f32c54c066501d9b92a3084c5896e8",
+        "sport_key": "basketball_nba",
+        "sport_title": "NBA",
+        "commence_time": "2020-07-31T01:00:00Z",
+        "home_team": "Los Angeles Lakers",
+        "away_team": "Los Angeles Clippers",
+        "bookmakers": []
+      },
+      {
+        "id": "4d7b67d20a04804cb54e8722e6be6c09",
+        "sport_key": "basketball_nba",
+        "sport_title": "NBA",
+        "commence_time": "2020-07-31T18:30:00Z",
+        "home_team": "Brooklyn Nets",
+        "away_team": "Orlando Magic",
+        "bookmakers": []
+      },
+      {
+        "id": "4e006bd2626d0389ad6747ae89781610",
+        "sport_key": "basketball_nba",
+        "sport_title": "NBA",
+        "commence_time": "2020-07-31T20:00:00Z",
+        "home_team": "Portland Trail Blazers",
+        "away_team": "Memphis Grizzlies",
+        "bookmakers": []
+      },
+      {
+        "id": "40deb75ba192047a18a185e2363e3909",
+        "sport_key": "basketball_nba",
+        "sport_title": "NBA",
+        "commence_time": "2020-07-31T20:00:00Z",
+        "home_team": "Washington Wizards",
+        "away_team": "Phoenix Suns",
+        "bookmakers": []
+      },
+      {
+        "id": "453bb4a38b1360bbdfc8df574108db1f",
+        "sport_key": "basketball_nba",
+        "sport_title": "NBA",
+        "commence_time": "2020-07-31T22:30:00Z",
+        "home_team": "Milwaukee Bucks",
+        "away_team": "Boston Celtics",
+        "bookmakers": []
+      },
+      {
+        "id": "b193a3c6bf198995eb9354f5131881a9",
+        "sport_key": "basketball_nba",
+        "sport_title": "NBA",
+        "commence_time": "2020-08-01T00:00:00Z",
+        "home_team": "San Antonio Spurs",
+        "away_team": "Sacramento Kings",
+        "bookmakers": []
+      },
+      {
+        "id": "d4bbabeb869f6925c41b523a4c3b5ce8",
+        "sport_key": "basketball_nba",
+        "sport_title": "NBA",
+        "commence_time": "2020-08-01T01:00:00Z",
+        "home_team": "Dallas Mavericks",
+        "away_team": "Houston Rockets",
+        "bookmakers": []
+      }
+    ]
+  },
+  {
+    "timestamp": "2020-06-27T04:25:00Z",
+    "previous_timestamp": "2020-06-27T04:15:00Z",
+    "next_timestamp": "2020-06-27T04:35:00Z",
+    "data": [
+      {
+        "id": "7636e56776d8596a29e00af3b8d13b62",
+        "sport_key": "basketball_nba",
+        "sport_title": "NBA",
+        "commence_time": "2020-07-30T22:30:00Z",
+        "home_team": "New Orleans Pelicans",
+        "away_team": "Utah Jazz",
+        "bookmakers": []
+      },
+      {
+        "id": "f8f32c54c066501d9b92a3084c5896e8",
+        "sport_key": "basketball_nba",
+        "sport_title": "NBA",
+        "commence_time": "2020-07-31T01:00:00Z",
+        "home_team": "Los Angeles Lakers",
+        "away_team": "Los Angeles Clippers",
+        "bookmakers": []
+      },
+      {
+        "id": "4d7b67d20a04804cb54e8722e6be6c09",
+        "sport_key": "basketball_nba",
+        "sport_title": "NBA",
+        "commence_time": "2020-07-31T18:30:00Z",
+        "home_team": "Brooklyn Nets",
+        "away_team": "Orlando Magic",
+        "bookmakers": []
+      },
+      {
+        "id": "4e006bd2626d0389ad6747ae89781610",
+        "sport_key": "basketball_nba",
+        "sport_title": "NBA",
+        "commence_time": "2020-07-31T20:00:00Z",
+        "home_team": "Portland Trail Blazers",
+        "away_team": "Memphis Grizzlies",
+        "bookmakers": []
+      },
+      {
+        "id": "40deb75ba192047a18a185e2363e3909",
+        "sport_key": "basketball_nba",
+        "sport_title": "NBA",
+        "commence_time": "2020-07-31T20:00:00Z",
+        "home_team": "Washington Wizards",
+        "away_team": "Phoenix Suns",
+        "bookmakers": []
+      },
+      {
+        "id": "453bb4a38b1360bbdfc8df574108db1f",
+        "sport_key": "basketball_nba",
+        "sport_title": "NBA",
+        "commence_time": "2020-07-31T22:30:00Z",
+        "home_team": "Milwaukee Bucks",
+        "away_team": "Boston Celtics",
+        "bookmakers": []
+      },
+      {
+        "id": "b193a3c6bf198995eb9354f5131881a9",
+        "sport_key": "basketball_nba",
+        "sport_title": "NBA",
+        "commence_time": "2020-08-01T00:00:00Z",
+        "home_team": "San Antonio Spurs",
+        "away_team": "Sacramento Kings",
+        "bookmakers": []
+      },
+      {
+        "id": "d4bbabeb869f6925c41b523a4c3b5ce8",
+        "sport_key": "basketball_nba",
+        "sport_title": "NBA",
+        "commence_time": "2020-08-01T01:00:00Z",
+        "home_team": "Dallas Mavericks",
+        "away_team": "Houston Rockets",
+        "bookmakers": []
+      }
+    ]
+  },
+  {
+    "timestamp": "2020-06-27T04:35:00Z",
+    "previous_timestamp": "2020-06-27T04:25:00Z",
+    "next_timestamp": "2020-06-27T04:45:00Z",
+    "data": [
+      {
+        "id": "7636e56776d8596a29e00af3b8d13b62",
+        "sport_key": "basketball_nba",
+        "sport_title": "NBA",
+        "commence_time": "2020-07-30T22:30:00Z",
+        "home_team": "New Orleans Pelicans",
+        "away_team": "Utah Jazz",
+        "bookmakers": []
+      },
+      {
+        "id": "f8f32c54c066501d9b92a3084c5896e8",
+        "sport_key": "basketball_nba",
+        "sport_title": "NBA",
+        "commence_time": "2020-07-31T01:00:00Z",
+        "home_team": "Los Angeles Lakers",
+        "away_team": "Los Angeles Clippers",
+        "bookmakers": []
+      },
+      {
+        "id": "4d7b67d20a04804cb54e8722e6be6c09",
+        "sport_key": "basketball_nba",
+        "sport_title": "NBA",
+        "commence_time": "2020-07-31T18:30:00Z",
+        "home_team": "Brooklyn Nets",
+        "away_team": "Orlando Magic",
+        "bookmakers": []
+      },
+      {
+        "id": "4e006bd2626d0389ad6747ae89781610",
+        "sport_key": "basketball_nba",
+        "sport_title": "NBA",
+        "commence_time": "2020-07-31T20:00:00Z",
+        "home_team": "Portland Trail Blazers",
+        "away_team": "Memphis Grizzlies",
+        "bookmakers": []
+      },
+      {
+        "id": "40deb75ba192047a18a185e2363e3909",
+        "sport_key": "basketball_nba",
+        "sport_title": "NBA",
+        "commence_time": "2020-07-31T20:00:00Z",
+        "home_team": "Washington Wizards",
+        "away_team": "Phoenix Suns",
+        "bookmakers": []
+      },
+      {
+        "id": "453bb4a38b1360bbdfc8df574108db1f",
+        "sport_key": "basketball_nba",
+        "sport_title": "NBA",
+        "commence_time": "2020-07-31T22:30:00Z",
+        "home_team": "Milwaukee Bucks",
+        "away_team": "Boston Celtics",
+        "bookmakers": []
+      },
+      {
+        "id": "b193a3c6bf198995eb9354f5131881a9",
+        "sport_key": "basketball_nba",
+        "sport_title": "NBA",
+        "commence_time": "2020-08-01T00:00:00Z",
+        "home_team": "San Antonio Spurs",
+        "away_team": "Sacramento Kings",
+        "bookmakers": []
+      },
+      {
+        "id": "d4bbabeb869f6925c41b523a4c3b5ce8",
+        "sport_key": "basketball_nba",
+        "sport_title": "NBA",
+        "commence_time": "2020-08-01T01:00:00Z",
+        "home_team": "Dallas Mavericks",
+        "away_team": "Houston Rockets",
+        "bookmakers": []
+      }
+    ]
+  },
+  {
+    "timestamp": "2020-06-27T04:45:00Z",
+    "previous_timestamp": "2020-06-27T04:35:00Z",
+    "next_timestamp": "2020-06-27T04:55:00Z",
+    "data": [
+      {
+        "id": "7636e56776d8596a29e00af3b8d13b62",
+        "sport_key": "basketball_nba",
+        "sport_title": "NBA",
+        "commence_time": "2020-07-30T22:30:00Z",
+        "home_team": "New Orleans Pelicans",
+        "away_team": "Utah Jazz",
+        "bookmakers": []
+      },
+      {
+        "id": "f8f32c54c066501d9b92a3084c5896e8",
+        "sport_key": "basketball_nba",
+        "sport_title": "NBA",
+        "commence_time": "2020-07-31T01:00:00Z",
+        "home_team": "Los Angeles Lakers",
+        "away_team": "Los Angeles Clippers",
+        "bookmakers": []
+      },
+      {
+        "id": "4d7b67d20a04804cb54e8722e6be6c09",
+        "sport_key": "basketball_nba",
+        "sport_title": "NBA",
+        "commence_time": "2020-07-31T18:30:00Z",
+        "home_team": "Brooklyn Nets",
+        "away_team": "Orlando Magic",
+        "bookmakers": []
+      },
+      {
+        "id": "4e006bd2626d0389ad6747ae89781610",
+        "sport_key": "basketball_nba",
+        "sport_title": "NBA",
+        "commence_time": "2020-07-31T20:00:00Z",
+        "home_team": "Portland Trail Blazers",
+        "away_team": "Memphis Grizzlies",
+        "bookmakers": []
+      },
+      {
+        "id": "40deb75ba192047a18a185e2363e3909",
+        "sport_key": "basketball_nba",
+        "sport_title": "NBA",
+        "commence_time": "2020-07-31T20:00:00Z",
+        "home_team": "Washington Wizards",
+        "away_team": "Phoenix Suns",
+        "bookmakers": []
+      },
+      {
+        "id": "453bb4a38b1360bbdfc8df574108db1f",
+        "sport_key": "basketball_nba",
+        "sport_title": "NBA",
+        "commence_time": "2020-07-31T22:30:00Z",
+        "home_team": "Milwaukee Bucks",
+        "away_team": "Boston Celtics",
+        "bookmakers": []
+      },
+      {
+        "id": "b193a3c6bf198995eb9354f5131881a9",
+        "sport_key": "basketball_nba",
+        "sport_title": "NBA",
+        "commence_time": "2020-08-01T00:00:00Z",
+        "home_team": "San Antonio Spurs",
+        "away_team": "Sacramento Kings",
+        "bookmakers": []
+      },
+      {
+        "id": "d4bbabeb869f6925c41b523a4c3b5ce8",
+        "sport_key": "basketball_nba",
+        "sport_title": "NBA",
+        "commence_time": "2020-08-01T01:00:00Z",
+        "home_team": "Dallas Mavericks",
+        "away_team": "Houston Rockets",
+        "bookmakers": []
+      }
+    ]
+  },
+  {
+    "timestamp": "2020-06-27T04:55:00Z",
+    "previous_timestamp": "2020-06-27T04:45:00Z",
+    "next_timestamp": "2020-06-27T05:05:00Z",
+    "data": [
+      {
+        "id": "7636e56776d8596a29e00af3b8d13b62",
+        "sport_key": "basketball_nba",
+        "sport_title": "NBA",
+        "commence_time": "2020-07-30T22:30:00Z",
+        "home_team": "New Orleans Pelicans",
+        "away_team": "Utah Jazz",
+        "bookmakers": []
+      },
+      {
+        "id": "f8f32c54c066501d9b92a3084c5896e8",
+        "sport_key": "basketball_nba",
+        "sport_title": "NBA",
+        "commence_time": "2020-07-31T01:00:00Z",
+        "home_team": "Los Angeles Lakers",
+        "away_team": "Los Angeles Clippers",
+        "bookmakers": []
+      },
+      {
+        "id": "4d7b67d20a04804cb54e8722e6be6c09",
+        "sport_key": "basketball_nba",
+        "sport_title": "NBA",
+        "commence_time": "2020-07-31T18:30:00Z",
+        "home_team": "Brooklyn Nets",
+        "away_team": "Orlando Magic",
+        "bookmakers": []
+      },
+      {
+        "id": "4e006bd2626d0389ad6747ae89781610",
+        "sport_key": "basketball_nba",
+        "sport_title": "NBA",
+        "commence_time": "2020-07-31T20:00:00Z",
+        "home_team": "Portland Trail Blazers",
+        "away_team": "Memphis Grizzlies",
+        "bookmakers": []
+      },
+      {
+        "id": "40deb75ba192047a18a185e2363e3909",
+        "sport_key": "basketball_nba",
+        "sport_title": "NBA",
+        "commence_time": "2020-07-31T20:00:00Z",
+        "home_team": "Washington Wizards",
+        "away_team": "Phoenix Suns",
+        "bookmakers": []
+      },
+      {
+        "id": "453bb4a38b1360bbdfc8df574108db1f",
+        "sport_key": "basketball_nba",
+        "sport_title": "NBA",
+        "commence_time": "2020-07-31T22:30:00Z",
+        "home_team": "Milwaukee Bucks",
+        "away_team": "Boston Celtics",
+        "bookmakers": []
+      },
+      {
+        "id": "b193a3c6bf198995eb9354f5131881a9",
+        "sport_key": "basketball_nba",
+        "sport_title": "NBA",
+        "commence_time": "2020-08-01T00:00:00Z",
+        "home_team": "San Antonio Spurs",
+        "away_team": "Sacramento Kings",
+        "bookmakers": []
+      },
+      {
+        "id": "d4bbabeb869f6925c41b523a4c3b5ce8",
+        "sport_key": "basketball_nba",
+        "sport_title": "NBA",
+        "commence_time": "2020-08-01T01:00:00Z",
+        "home_team": "Dallas Mavericks",
+        "away_team": "Houston Rockets",
+        "bookmakers": []
+      }
+    ]
+  },
+  {
+    "timestamp": "2020-06-27T05:05:00Z",
+    "previous_timestamp": "2020-06-27T04:55:00Z",
+    "next_timestamp": "2020-06-27T05:15:00Z",
+    "data": [
+      {
+        "id": "7636e56776d8596a29e00af3b8d13b62",
+        "sport_key": "basketball_nba",
+        "sport_title": "NBA",
+        "commence_time": "2020-07-30T22:30:00Z",
+        "home_team": "New Orleans Pelicans",
+        "away_team": "Utah Jazz",
+        "bookmakers": []
+      },
+      {
+        "id": "f8f32c54c066501d9b92a3084c5896e8",
+        "sport_key": "basketball_nba",
+        "sport_title": "NBA",
+        "commence_time": "2020-07-31T01:00:00Z",
+        "home_team": "Los Angeles Lakers",
+        "away_team": "Los Angeles Clippers",
+        "bookmakers": []
+      },
+      {
+        "id": "4d7b67d20a04804cb54e8722e6be6c09",
+        "sport_key": "basketball_nba",
+        "sport_title": "NBA",
+        "commence_time": "2020-07-31T18:30:00Z",
+        "home_team": "Brooklyn Nets",
+        "away_team": "Orlando Magic",
+        "bookmakers": []
+      },
+      {
+        "id": "4e006bd2626d0389ad6747ae89781610",
+        "sport_key": "basketball_nba",
+        "sport_title": "NBA",
+        "commence_time": "2020-07-31T20:00:00Z",
+        "home_team": "Portland Trail Blazers",
+        "away_team": "Memphis Grizzlies",
+        "bookmakers": []
+      },
+      {
+        "id": "40deb75ba192047a18a185e2363e3909",
+        "sport_key": "basketball_nba",
+        "sport_title": "NBA",
+        "commence_time": "2020-07-31T20:00:00Z",
+        "home_team": "Washington Wizards",
+        "away_team": "Phoenix Suns",
+        "bookmakers": []
+      },
+      {
+        "id": "453bb4a38b1360bbdfc8df574108db1f",
+        "sport_key": "basketball_nba",
+        "sport_title": "NBA",
+        "commence_time": "2020-07-31T22:30:00Z",
+        "home_team": "Milwaukee Bucks",
+        "away_team": "Boston Celtics",
+        "bookmakers": []
+      },
+      {
+        "id": "b193a3c6bf198995eb9354f5131881a9",
+        "sport_key": "basketball_nba",
+        "sport_title": "NBA",
+        "commence_time": "2020-08-01T00:00:00Z",
+        "home_team": "San Antonio Spurs",
+        "away_team": "Sacramento Kings",
+        "bookmakers": []
+      },
+      {
+        "id": "d4bbabeb869f6925c41b523a4c3b5ce8",
+        "sport_key": "basketball_nba",
+        "sport_title": "NBA",
+        "commence_time": "2020-08-01T01:00:00Z",
+        "home_team": "Dallas Mavericks",
+        "away_team": "Houston Rockets",
+        "bookmakers": []
+      }
+    ]
+  },
+  {
+    "timestamp": "2020-06-27T05:15:00Z",
+    "previous_timestamp": "2020-06-27T05:05:00Z",
+    "next_timestamp": "2020-06-27T05:25:00Z",
+    "data": [
+      {
+        "id": "7636e56776d8596a29e00af3b8d13b62",
+        "sport_key": "basketball_nba",
+        "sport_title": "NBA",
+        "commence_time": "2020-07-30T22:30:00Z",
+        "home_team": "New Orleans Pelicans",
+        "away_team": "Utah Jazz",
+        "bookmakers": []
+      },
+      {
+        "id": "f8f32c54c066501d9b92a3084c5896e8",
+        "sport_key": "basketball_nba",
+        "sport_title": "NBA",
+        "commence_time": "2020-07-31T01:00:00Z",
+        "home_team": "Los Angeles Lakers",
+        "away_team": "Los Angeles Clippers",
+        "bookmakers": []
+      },
+      {
+        "id": "4d7b67d20a04804cb54e8722e6be6c09",
+        "sport_key": "basketball_nba",
+        "sport_title": "NBA",
+        "commence_time": "2020-07-31T18:30:00Z",
+        "home_team": "Brooklyn Nets",
+        "away_team": "Orlando Magic",
+        "bookmakers": []
+      },
+      {
+        "id": "4e006bd2626d0389ad6747ae89781610",
+        "sport_key": "basketball_nba",
+        "sport_title": "NBA",
+        "commence_time": "2020-07-31T20:00:00Z",
+        "home_team": "Portland Trail Blazers",
+        "away_team": "Memphis Grizzlies",
+        "bookmakers": []
+      },
+      {
+        "id": "40deb75ba192047a18a185e2363e3909",
+        "sport_key": "basketball_nba",
+        "sport_title": "NBA",
+        "commence_time": "2020-07-31T20:00:00Z",
+        "home_team": "Washington Wizards",
+        "away_team": "Phoenix Suns",
+        "bookmakers": []
+      },
+      {
+        "id": "453bb4a38b1360bbdfc8df574108db1f",
+        "sport_key": "basketball_nba",
+        "sport_title": "NBA",
+        "commence_time": "2020-07-31T22:30:00Z",
+        "home_team": "Milwaukee Bucks",
+        "away_team": "Boston Celtics",
+        "bookmakers": []
+      },
+      {
+        "id": "b193a3c6bf198995eb9354f5131881a9",
+        "sport_key": "basketball_nba",
+        "sport_title": "NBA",
+        "commence_time": "2020-08-01T00:00:00Z",
+        "home_team": "San Antonio Spurs",
+        "away_team": "Sacramento Kings",
+        "bookmakers": []
+      },
+      {
+        "id": "d4bbabeb869f6925c41b523a4c3b5ce8",
+        "sport_key": "basketball_nba",
+        "sport_title": "NBA",
+        "commence_time": "2020-08-01T01:00:00Z",
+        "home_team": "Dallas Mavericks",
+        "away_team": "Houston Rockets",
+        "bookmakers": []
+      }
+    ]
+  }
+]

@@ -1,0 +1,12 @@
+{
+  "total_dates": 1827,
+  "processed_dates": 1827,
+  "total_snapshots": 14212,
+  "total_games": 238859,
+  "new_games": 5840,
+  "duplicate_games": 232927,
+  "errors": 22,
+  "next_day_timestamps": 1639,
+  "rate_limit_retries": 0,
+  "skipped_dates": 1396
+}

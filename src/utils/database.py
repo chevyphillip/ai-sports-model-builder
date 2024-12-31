@@ -1,20 +1,14 @@
-"""Database utilities."""
+"""Database utility functions."""
 
 import os
-from contextlib import contextmanager
-from typing import Generator
 from urllib.parse import quote
-
-from dotenv import load_dotenv
 from sqlalchemy import create_engine, event
+from sqlalchemy.orm import sessionmaker
 from sqlalchemy.engine import Engine
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import Session, sessionmaker
+from dotenv import load_dotenv
 
 # Load environment variables
 load_dotenv()
-
-Base = declarative_base()
 
 
 def get_database_url() -> str:
@@ -34,7 +28,6 @@ def get_database_url() -> str:
         )
 
     # For Supabase, we need to properly encode the username and password
-    # Use quote() instead of quote_plus() to match Supabase's URL format
     encoded_user = quote(db_user)
     encoded_password = quote(db_password)
 
@@ -53,50 +46,31 @@ def set_schema(dbapi_connection, _):
         dbapi_connection.commit()
 
 
-def create_db_engine() -> Engine:
-    """Create database engine with connection pooling."""
-    # Supabase connection settings
-    connect_args = {
+# Create engine with connection pooling
+engine = create_engine(
+    get_database_url(),
+    pool_size=5,  # Maximum number of persistent connections
+    max_overflow=10,  # Maximum number of connections that can be created beyond pool_size
+    pool_timeout=30,  # Timeout for getting a connection from the pool
+    pool_recycle=1800,  # Recycle connections after 30 minutes
+    connect_args={
         "sslmode": "require",  # Supabase requires SSL
         "application_name": "ai-sports-model-builder",  # Helpful for identifying connections
-    }
+    },
+)
 
-    engine = create_engine(
-        get_database_url(),
-        pool_size=5,  # Maximum number of persistent connections
-        max_overflow=10,  # Maximum number of connections that can be created beyond pool_size
-        pool_timeout=30,  # Timeout for getting a connection from the pool
-        pool_recycle=1800,  # Recycle connections after 30 minutes
-        connect_args=connect_args,
-        echo=True,  # Enable SQL logging for debugging
-    )
+# Set the search_path to use the correct schema
+if os.getenv("DB_SCHEMA"):
+    event.listen(engine, "connect", set_schema)
 
-    # Set the search_path to use the correct schema
-    if os.getenv("DB_SCHEMA"):
-        event.listen(engine, "connect", set_schema)
-
-    return engine
+# Create session factory
+Session = sessionmaker(bind=engine)
 
 
-# Create global engine instance
-engine = create_db_engine()
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+def get_db_session():
+    """Get a database session.
 
-
-@contextmanager
-def get_db_session() -> Generator[Session, None, None]:
-    """Get database session with automatic cleanup."""
-    session = SessionLocal()
-    try:
-        yield session
-        session.commit()
-    except Exception:
-        session.rollback()
-        raise
-    finally:
-        session.close()
-
-
-def init_db() -> None:
-    """Initialize database by creating all tables."""
-    Base.metadata.create_all(bind=engine)
+    Returns:
+        SQLAlchemy session
+    """
+    return Session()
