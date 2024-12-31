@@ -19,13 +19,21 @@ wheels/
 *.egg-info/
 .installed.cfg
 *.egg
-.pytest_cache/
+
+# Testing and Coverage
 .coverage
+.coverage.*
 coverage.xml
 htmlcov/
+.pytest_cache/
+.hypothesis/
 .tox/
 .nox/
-.hypothesis/
+nosetests.xml
+test-output/
+test-results/
+.testmondata
+.tmontmp
 
 # Virtual Environment
 venv/
@@ -50,29 +58,12 @@ pythonenv*/
 .classpath
 nbproject/
 
-# Testing and Coverage
-.coverage
-.coverage.*
-coverage.xml
-*.cover
-.pytest_cache/
-.pytest.cache
-nosetests.xml
-coverage/
-.testmondata
-.tmontmp
-test-output/
-test-results/
-
 # Documentation
 docs/_build/
 docs/_static/
 docs/_templates/
 site/
 .mkdocs/
-_build/
-build/
-dist/
 
 # Jupyter Notebook
 .ipynb_checkpoints
@@ -105,10 +96,14 @@ config.ini
 *.db-shm
 *.db-wal
 *.dump
-*.sql
 *.bak
-migrations/versions/*
-!migrations/versions/.gitkeep
+
+# Supabase
+.branches/
+.temp/
+supabase/.temp/
+supabase/.branches/
+**/supabase/seed.sql
 
 # Logs
 logs/
@@ -126,9 +121,6 @@ pip-delete-this-directory.txt
 .eslintcache
 .npm
 .yarn
-__pycache__/
-*.py[cod]
-*$py.class
 .mypy_cache/
 .dmypy.json
 dmypy.json
@@ -151,31 +143,22 @@ data/raw/
 data/processed/
 data/interim/
 data/external/
+src/data/raw/
+src/data/processed/
+src/data/interim/
+src/data/external/
 models/trained/
 models/checkpoints/
-notebooks/scratch/
-notebooks/archive/
-outputs/
-results/
-temp/
-tmp/
+collection_stats.json
 
-# API and sensitive data
-api_keys.txt
-credentials.json
-token.json
-*.token
-client_secrets.json
-service-account.json
-google-services.json
-firebase-credentials.json
-
-# Dependency management
-poetry.lock
-Pipfile.lock
-requirements.txt.lock
-yarn.lock
-package-lock.json
+# Node/TypeScript
+node_modules/
+dist/
+.next/
+.nuxt/
+.output/
+.turbo/
+*.tsbuildinfo
 
 # Local development
 local_settings.py
@@ -192,16 +175,11 @@ docker-compose.*.yml
 profile_results/
 memory_profiler/
 
-# Generated files
-generated/
-*.generated.*
-auto_generated/
-*.auto_generated.*
-
-# Backup files
-*.bak
-*.backup
-*~
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.temp
 *.swp
 *.swo
-*.swn
+*~
