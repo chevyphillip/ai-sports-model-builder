@@ -10,7 +10,6 @@ setup(
         "sqlalchemy>=2.0.0",
         "psycopg2-binary>=2.9.9",
         "python-dotenv>=1.0.0",
-        "alembic>=1.12.0",
         "pandas>=2.1.4",
         "numpy>=1.26.2",
         "scipy>=1.11.0",
@@ -18,6 +17,8 @@ setup(
         "aiohttp>=3.9.1",
         "fastapi>=0.104.0",
         "uvicorn>=0.24.0",
+        "supabase>=2.0.0",
+        "postgrest>=0.13.0",
     ],
     extras_require={
         "dev": [
@@ -43,6 +44,8 @@ setup(
         "docs": [
             "sphinx>=7.1.0",
             "sphinx-rtd-theme>=1.3.0",
+            "mkdocs>=1.5.0",
+            "mkdocs-material>=9.0.0",
         ],
     },
     entry_points={
@@ -52,10 +55,10 @@ setup(
     },
     author="Your Name",
     author_email="your.email@example.com",
-    description="AI Sports Model Builder for NBA, NFL, and NHL predictions",
+    description="AI Sports Model Builder for NBA game predictions",
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
-    keywords="sports, betting, machine learning, AI, predictions",
+    keywords="sports, betting, machine learning, AI, predictions, NBA",
     url="https://github.com/yourusername/ai-sports-model-builder",
     classifiers=[
         "Development Status :: 3 - Alpha",

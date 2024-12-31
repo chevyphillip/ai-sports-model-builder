@@ -1,244 +1,231 @@
-"""Client for collecting historical odds data from the Odds API."""
+"""Client for The Odds API."""
 
-import json
 import os
-from datetime import datetime, timezone
-from typing import Dict, List, Optional
 import logging
-
+from typing import Dict, Optional, Tuple, List
 import requests
-from sqlalchemy import create_engine, text
-from sqlalchemy.orm import Session
-from urllib.parse import quote_plus
-
-# Configure logging
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+import aiohttp
+from datetime import datetime, timedelta
+import asyncio
 
 
 class OddsAPIClient:
-    """Client for interacting with the Odds API."""
-
-    BASE_URL = "https://api.the-odds-api.com/v4/historical"
-    SPORT = "basketball_nba"
-    REGIONS = ["us"]  # Focus on US bookmakers
-    MARKETS = ["h2h", "spreads", "totals"]  # Markets we want to collect
+    """Client for The Odds API."""
 
     def __init__(self, api_key: Optional[str] = None):
-        """Initialize the Odds API client.
+        """Initialize the client.
 
         Args:
-            api_key: Optional API key. If not provided, will try to get from environment.
+            api_key: API key for The Odds API. If not provided, will try to get from environment.
         """
         self.api_key = api_key or os.getenv("ODDS_API_KEY")
         if not self.api_key:
-            raise ValueError("Odds API key not provided and not found in environment")
-
-        # Set up database connection
-        db_url = f"postgresql://{os.getenv('DB_USER')}:{quote_plus(os.getenv('DB_PASSWORD'))}@{os.getenv('DB_HOST')}:{os.getenv('DB_PORT')}/{os.getenv('DB_NAME')}"
-        self.engine = create_engine(db_url, connect_args={"sslmode": "require"})
-
-    def get_historical_odds(
-        self,
-        date: str,
-        sport: str = SPORT,
-        regions: List[str] = None,
-        markets: List[str] = None,
-    ) -> Dict:
-        """Get historical odds data for a specific date.
-
-        Args:
-            date: ISO8601 formatted date string (e.g., "2024-12-27T12:00:00Z")
-            sport: Sport key (default: basketball_nba)
-            regions: List of regions to get odds for (default: ["us"])
-            markets: List of markets to get odds for (default: ["h2h", "spreads", "totals"])
-
-        Returns:
-            Dictionary containing the odds data
-        """
-        regions = regions or self.REGIONS
-        markets = markets or self.MARKETS
-
-        url = f"{self.BASE_URL}/sports/{sport}/odds"
-        params = {
-            "apiKey": self.api_key,
-            "regions": ",".join(regions),
-            "markets": ",".join(markets),
-            "date": date,
-            "oddsFormat": "american",  # Use American odds format
-        }
-
-        try:
-            response = requests.get(url, params=params)
-            response.raise_for_status()
-            return response.json()
-        except requests.exceptions.RequestException as e:
-            logger.error(f"Error fetching odds data: {e}")
-            return {}
-
-    def store_odds_snapshot(self, snapshot_data: Dict, session: Session) -> None:
-        """Store odds snapshot in the database.
-
-        Args:
-            snapshot_data: Odds data from the API
-            session: SQLAlchemy session
-        """
-        try:
-            # Store each game's odds
-            for game in snapshot_data.get("data", []):
-                # Generate game_id in our format: NBA-YYYY-MM-DD-HOME-AWAY
-                game_date = datetime.fromisoformat(
-                    game["commence_time"].replace("Z", "+00:00")
-                )
-                home_abbr = "".join(
-                    c for c in game["home_team"].upper() if c.isalpha()
-                )[:3]
-                away_abbr = "".join(
-                    c for c in game["away_team"].upper() if c.isalpha()
-                )[:3]
-                game_id = (
-                    f"NBA-{game_date.strftime('%Y-%m-%d')}-{home_abbr}-{away_abbr}"
-                )
-
-                # Create game record if it doesn't exist
-                game_query = text(
-                    """
-                    INSERT INTO nba_game_lines.games (
-                        game_id, game_date, season_year, season,
-                        visitor_team, visitor_points, home_team, home_points,
-                        arena, source, scraped_at
-                    )
-                    VALUES (
-                        :game_id, :game_date, :season_year, :season,
-                        :visitor_team, 0, :home_team, 0,
-                        'TBD', 'odds_api', :scraped_at
-                    )
-                    ON CONFLICT (game_id) DO NOTHING
-                """
-                )
-
-                season_year = game_date.year
-                season = f"{season_year-1}-{str(season_year)[2:]}"
-
-                session.execute(
-                    game_query,
-                    {
-                        "game_id": game_id,
-                        "game_date": game_date,
-                        "season_year": season_year,
-                        "season": season,
-                        "visitor_team": game["away_team"],
-                        "home_team": game["home_team"],
-                        "scraped_at": datetime.now(timezone.utc),
-                    },
-                )
-
-                # Create odds snapshot record
-                snapshot_query = text(
-                    """
-                    INSERT INTO nba_game_lines.odds_snapshots (
-                        game_id, snapshot_timestamp, 
-                        previous_snapshot_timestamp, next_snapshot_timestamp
-                    )
-                    VALUES (
-                        :game_id, :snapshot_timestamp,
-                        :previous_snapshot_timestamp, :next_snapshot_timestamp
-                    )
-                    RETURNING id
-                """
-                )
-
-                # Insert snapshot and get its ID
-                snapshot_id = session.execute(
-                    snapshot_query,
-                    {
-                        "game_id": game_id,
-                        "snapshot_timestamp": datetime.fromisoformat(
-                            snapshot_data["timestamp"].replace("Z", "+00:00")
-                        ),
-                        "previous_snapshot_timestamp": (
-                            datetime.fromisoformat(
-                                snapshot_data["previous_timestamp"].replace(
-                                    "Z", "+00:00"
-                                )
-                            )
-                            if snapshot_data.get("previous_timestamp")
-                            else None
-                        ),
-                        "next_snapshot_timestamp": (
-                            datetime.fromisoformat(
-                                snapshot_data["next_timestamp"].replace("Z", "+00:00")
-                            )
-                            if snapshot_data.get("next_timestamp")
-                            else None
-                        ),
-                    },
-                ).scalar()
-
-                # Store bookmaker odds for this game
-                for bookmaker in game.get("bookmakers", []):
-                    bookmaker_query = text(
-                        """
-                        INSERT INTO nba_game_lines.bookmaker_odds (
-                            snapshot_id, bookmaker_key, bookmaker_title,
-                            last_update, markets
-                        )
-                        VALUES (
-                            :snapshot_id, :bookmaker_key, :bookmaker_title,
-                            :last_update, cast(:markets as jsonb)
-                        )
-                    """
-                    )
-
-                    session.execute(
-                        bookmaker_query,
-                        {
-                            "snapshot_id": snapshot_id,
-                            "bookmaker_key": bookmaker["key"],
-                            "bookmaker_title": bookmaker["title"],
-                            "last_update": datetime.fromisoformat(
-                                bookmaker["last_update"].replace("Z", "+00:00")
-                            ),
-                            "markets": json.dumps(bookmaker["markets"]),
-                        },
-                    )
-
-            session.commit()
-            logger.info(
-                f"Successfully stored odds snapshot from {snapshot_data['timestamp']}"
+            raise ValueError(
+                "API key must be provided or set in ODDS_API_KEY environment variable"
             )
 
-        except Exception as e:
-            session.rollback()
-            logger.error(f"Error storing odds data: {e}")
-            raise
+        self.base_url = "https://api.the-odds-api.com/v4"
+        self.sport = "basketball_nba"
+        self.regions = "us"
+        self.markets = "h2h,spreads,totals"
+        self.odds_format = "american"
+        self.rate_limit_delay = 0.05  # 50ms delay between requests (20 requests/sec)
 
-    def collect_historical_odds(self, start_date: str, end_date: str) -> None:
-        """Collect historical odds data for a date range.
+    def _build_historical_url(self, date: str) -> str:
+        """Build URL for historical odds endpoint.
 
         Args:
-            start_date: ISO8601 formatted start date
-            end_date: ISO8601 formatted end date
+            date: ISO8601 formatted date
+
+        Returns:
+            Complete URL for the request
         """
-        current_date = start_date
+        return (
+            f"{self.base_url}/historical/sports/{self.sport}/odds/"
+            f"?apiKey={self.api_key}"
+            f"&regions={self.regions}"
+            f"&markets={self.markets}"
+            f"&oddsFormat={self.odds_format}"
+            f"&date={date}"
+        )
 
-        while current_date <= end_date:
-            try:
-                # Get odds data for current date
-                odds_data = self.get_historical_odds(current_date)
-                if not odds_data:
-                    logger.warning(f"No odds data found for {current_date}")
-                    continue
+    async def _get_snapshot(
+        self, session: aiohttp.ClientSession, timestamp: str
+    ) -> Tuple[Dict, Optional[str]]:
+        """Get a single odds snapshot for a timestamp.
 
-                # Store the data
-                with Session(self.engine) as session:
-                    self.store_odds_snapshot(odds_data, session)
+        Args:
+            session: aiohttp ClientSession
+            timestamp: ISO8601 formatted timestamp
 
-                # Move to next snapshot using the next_timestamp from the response
-                current_date = odds_data.get("next_timestamp")
-                if not current_date or current_date > end_date:
-                    break
+        Returns:
+            Tuple of (data, error)
+        """
+        url = self._build_historical_url(timestamp)
+        await asyncio.sleep(self.rate_limit_delay)
 
-            except Exception as e:
-                logger.error(f"Error processing date {current_date}: {e}")
+        try:
+            async with session.get(url) as response:
+                remaining = response.headers.get("x-requests-remaining")
+                used = response.headers.get("x-requests-used")
+
+                if remaining and used:
+                    logging.debug(
+                        f"API Requests - Remaining: {remaining}, Used: {used}"
+                    )
+
+                if response.status != 200:
+                    text = await response.text()
+                    if "EXCEEDED_FREQ_LIMIT" in text:
+                        # Add extra delay and retry
+                        await asyncio.sleep(1)
+                        return await self._get_snapshot(session, timestamp)
+                    return {}, f"API Error: {response.status} - {text}"
+
+                data = await response.json()
+                return data, None
+
+        except Exception as e:
+            return {}, f"Request Error: {str(e)}"
+
+    def _is_same_day(self, timestamp1: str, timestamp2: str) -> bool:
+        """Check if two timestamps are from the same day.
+
+        Args:
+            timestamp1: First ISO8601 timestamp
+            timestamp2: Second ISO8601 timestamp
+
+        Returns:
+            True if timestamps are from the same day
+        """
+        dt1 = datetime.fromisoformat(timestamp1.replace("Z", "+00:00"))
+        dt2 = datetime.fromisoformat(timestamp2.replace("Z", "+00:00"))
+        return dt1.date() == dt2.date()
+
+    async def _follow_timestamp_chain(
+        self,
+        session: aiohttp.ClientSession,
+        start_timestamp: str,
+        max_snapshots: int = 10,
+        visited: Optional[set] = None,
+    ) -> List[Dict]:
+        """Follow the chain of timestamps to collect all snapshots.
+
+        Args:
+            session: aiohttp ClientSession
+            start_timestamp: Starting ISO8601 timestamp
+            max_snapshots: Maximum number of snapshots to collect
+            visited: Set of visited timestamps
+
+        Returns:
+            List of snapshot data
+        """
+        snapshots = []
+        visited = visited or set()
+        queue = [(start_timestamp, 0)]  # (timestamp, depth)
+
+        while queue and len(snapshots) < max_snapshots:
+            current_timestamp, depth = queue.pop(0)
+
+            if current_timestamp in visited:
                 continue
+
+            visited.add(current_timestamp)
+            data, error = await self._get_snapshot(session, current_timestamp)
+
+            if error:
+                logging.error(f"Error following timestamp chain: {error}")
+                continue
+
+            if not data:
+                continue
+
+            if data.get("data"):
+                snapshots.append(data)
+                logging.info(f"Found {len(data['data'])} games at {current_timestamp}")
+
+            if depth < max_snapshots:
+                # Only follow next_timestamp if it exists and is from the same day
+                if data.get("next_timestamp"):
+                    next_ts = data["next_timestamp"]
+                    if next_ts not in visited and self._is_same_day(
+                        start_timestamp, next_ts
+                    ):
+                        queue.append((next_ts, depth + 1))
+
+        return snapshots
+
+    async def get_historical_odds_async(
+        self, session: aiohttp.ClientSession, date: str, max_snapshots: int = 10
+    ) -> Tuple[List[Dict], Optional[str]]:
+        """Get historical odds for a specific date by following timestamp chain.
+
+        Args:
+            session: aiohttp ClientSession
+            date: ISO8601 formatted date
+            max_snapshots: Maximum number of snapshots to collect per date
+
+        Returns:
+            Tuple of (list of snapshots, error)
+        """
+        visited = set()
+        all_snapshots = []
+
+        # Get initial snapshot
+        data, error = await self._get_snapshot(session, date)
+        if error:
+            return [], error
+
+        if not data:
+            return [], None
+
+        # If we found games, follow the timestamp chain
+        if data.get("data"):
+            snapshots = await self._follow_timestamp_chain(
+                session, date, max_snapshots=max_snapshots, visited=visited
+            )
+            all_snapshots.extend(snapshots)
+            return all_snapshots, None
+
+        # If no games in initial snapshot, try following next_timestamp
+        if data.get("next_timestamp"):
+            next_ts = data["next_timestamp"]
+            if self._is_same_day(date, next_ts):
+                snapshots = await self._follow_timestamp_chain(
+                    session,
+                    next_ts,
+                    max_snapshots=max_snapshots,
+                    visited=visited,
+                )
+                all_snapshots.extend(snapshots)
+                if all_snapshots:
+                    return all_snapshots, None
+
+        return [], None
+
+    def get_historical_odds(self, date: str) -> Tuple[Dict, Optional[str]]:
+        """Get historical odds for a specific date (synchronous version).
+
+        Args:
+            date: ISO8601 formatted date
+
+        Returns:
+            Tuple of (data, error)
+        """
+        url = self._build_historical_url(date)
+
+        try:
+            response = requests.get(url)
+            remaining = response.headers.get("x-requests-remaining")
+            used = response.headers.get("x-requests-used")
+
+            if remaining and used:
+                logging.info(f"API Requests - Remaining: {remaining}, Used: {used}")
+
+            if response.status_code != 200:
+                return {}, f"API Error: {response.status_code} - {response.text}"
+
+            return response.json(), None
+
+        except Exception as e:
+            return {}, f"Request Error: {str(e)}"
